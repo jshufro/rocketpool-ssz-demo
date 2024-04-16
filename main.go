@@ -29,14 +29,13 @@ func main() {
 		panic(err)
 	}
 
-	// Refuse to write to a terminal
-	o, _ := output.Stat()
-	if *encode && (o.Mode()&os.ModeCharDevice) != 0 {
-		panic("Refusing to write SSZ to terminal")
-	}
-
 	sszFile := ssz_types.NewSSZFile_v1()
 	if *encode {
+		// Refuse to write to a terminal
+		if o, _ := output.Stat(); o.Mode()&os.ModeCharDevice != 0 {
+			panic("Refusing to write SSZ to terminal")
+		}
+
 		err := json.Unmarshal(data, sszFile)
 		if err != nil {
 			panic(err)
@@ -45,18 +44,18 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		goto done
+	} else {
+
+		err = sszFile.UnmarshalSSZ(data)
+		if err != nil {
+			panic(err)
+		}
+		data, err = json.Marshal(sszFile)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	err = sszFile.UnmarshalSSZ(data)
-	if err != nil {
-		panic(err)
-	}
-	data, err = json.Marshal(sszFile)
-	if err != nil {
-		panic(err)
-	}
-done:
 	_, err = output.Write(data)
 	if err != nil {
 		panic(err)
