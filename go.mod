@@ -24,6 +24,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/rocket-pool/smartnode => github.com/jshufro/smartnode v1.1.1-0.20240414065551-a92a1ccdfe36
+replace github.com/rocket-pool/smartnode => github.com/jshufro/smartnode v1.1.1-0.20240416144413-2b419b2f42bd
 
 replace github.com/wealdtech/go-merkletree v1.0.1-0.20190605192610-2bb163c2ea2a => github.com/rocket-pool/go-merkletree v1.0.1-0.20220406020931-c262d9b976dd
