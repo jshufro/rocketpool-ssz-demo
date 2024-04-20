@@ -3,11 +3,26 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io"
 	"os"
 
 	"github.com/rocket-pool/smartnode/shared/services/rewards/ssz_types"
 )
+
+func printCid(filename string, data []byte) bool {
+	if filename == "" {
+		return false
+	}
+
+	cid, err := singleFileDirIPFSCid(data, filename)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(cid)
+	return true
+}
 
 func main() {
 	input, output := os.Stdin, os.Stdout
@@ -20,6 +35,7 @@ func main() {
 		return err
 	})
 	encode := flag.Bool("encode", false, "If passed, input is treated as json and encoded to ssz instead of decoded to json")
+	getCID := flag.String("cid", "", "If passed, input is treated as ssz and the IPFS CID corresponding to the ssz and filename is printed to stdout")
 	defer input.Close()
 	defer output.Close()
 	flag.Parse()
@@ -44,8 +60,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		if printCid(*getCID, data) {
+			return
+		}
 	} else {
-
+		if printCid(*getCID, data) {
+			return
+		}
 		err = sszFile.UnmarshalSSZ(data)
 		if err != nil {
 			panic(err)
